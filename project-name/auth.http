@@ -1,0 +1,106 @@
+### Authentication API Tests
+### Install REST Client extension in VS Code to use this file
+
+@baseUrl = http://localhost:3000
+@email = testuser@example.com
+@password = SecurePassword123
+
+### 1. Signup - Create new user
+POST {{baseUrl}}/auth/signup
+Content-Type: application/json
+
+{
+  "name": "Test User",
+  "email": "{{email}}",
+  "password": "{{password}}"
+}
+
+### 2. Signup - Already exists (should fail)
+POST {{baseUrl}}/auth/signup
+Content-Type: application/json
+
+{
+  "name": "Test User 2",
+  "email": "{{email}}",
+  "password": "{{password}}"
+}
+
+### 3. Signup - Invalid email (should fail)
+POST {{baseUrl}}/auth/signup
+Content-Type: application/json
+
+{
+  "name": "Invalid User",
+  "email": "invalid-email",
+  "password": "{{password}}"
+}
+
+### 4. Signup - Password too short (should fail)
+POST {{baseUrl}}/auth/signup
+Content-Type: application/json
+
+{
+  "name": "Short Pass",
+  "email": "short@example.com",
+  "password": "123"
+}
+
+### 5. Signup - Name too short (should fail)
+POST {{baseUrl}}/auth/signup
+Content-Type: application/json
+
+{
+  "name": "AB",
+  "email": "shortname@example.com",
+  "password": "{{password}}"
+}
+
+### 6. Login - Valid credentials
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{
+  "email": "{{email}}",
+  "password": "{{password}}"
+}
+
+### 7. Login - Wrong password (should fail)
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{
+  "email": "{{email}}",
+  "password": "WrongPassword123"
+}
+
+### 8. Login - Non-existent email (should fail)
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{
+  "email": "nonexistent@example.com",
+  "password": "{{password}}"
+}
+
+### 9. Get Profile - Without token (should fail with 401)
+GET {{baseUrl}}/user/profile
+
+### 10. Get Profile - With valid token
+# First run request #6 (Login) and copy the token from response
+# Replace TOKEN below with actual token from login response
+GET {{baseUrl}}/user/profile
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2NTk5MWExNTFlMTEyMzQ1Njc4OTBhYmMiLCJlbWFpbCI6InRlc3R1c2VyQGV4YW1wbGUuY29tIiwiaWF0IjoxNzEyNDU2MjUwLCJleHAiOjE3MTMwNjEwNTB9.SAMPLE_TOKEN_HERE
+
+### 11. Get Profile - With invalid token (should fail)
+GET {{baseUrl}}/user/profile
+Authorization: Bearer invalid_token_here
+
+### 12. Get Profile - With malformed authorization header
+GET {{baseUrl}}/user/profile
+Authorization: InvalidFormat token
+
+### Notes:
+### - Replace TOKEN in request #10 with actual JWT from login response
+### - Email and password are environment variables, customize as needed
+### - All requests are designed for testing different scenarios
+### - Use REST Client extension in VS Code for easy testing
